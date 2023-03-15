@@ -1,8 +1,7 @@
 extern crate rand;
 
-use proconio::input;
 use rand::Rng;
-use std::io::{stdout, Write};
+use std::io::{stdout, stdin, Write, BufRead};
 use std::fs::File;
 use std::process::{Command};
 
@@ -10,9 +9,10 @@ fn main() {
     let all_n: i32 = 4;
     print!("num: ");
     stdout().flush().unwrap();
-    input! {
-        n: usize
-    }
+    let stdin = stdin();
+    let mut buffer = String::new();
+    stdin.lock().read_line(&mut buffer).unwrap();  // 標準入力から行を読み取る
+    let n : usize = buffer.trim().parse().unwrap();  // 文字列を数値に変換する
     progress(all_n, 0);
 
     // 問題・解答を生成してvecに入れる
@@ -137,7 +137,7 @@ fn shell() {
 
 // k/n
 fn progress(n: i32, k: i32) {
-    print!("\x1B[2K");
+    print!("\x1b[2K");
     print!("\r");
     stdout().flush().unwrap();
     for _i in 0 .. k {
