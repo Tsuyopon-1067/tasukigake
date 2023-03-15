@@ -7,17 +7,20 @@ use std::fs::File;
 use std::process::{Command};
 
 fn main() {
+    let all_n: i32 = 4;
     print!("num: ");
     stdout().flush().unwrap();
     input! {
         n: usize
     }
+    progress(all_n, 0);
 
     // 問題・解答を生成してvecに入れる
     let mut v: Vec<(String, String)> = Vec::new();
     for _i in 0..n {
         v.push(equ());
     }
+    progress(all_n, 1);
 
     // 問題・解答を文字列化
     let mut ques: String = String::new();
@@ -26,12 +29,15 @@ fn main() {
         ques += &format!("{}{}{}", "\t\t\t\\item $", v[i].0, "$ \\\\\n");
         ans += &format!("{}{}{}", "\t\t\t\\item $", v[i].1, "$ \\\\\n");
     }
+    progress(all_n, 2);
 
     // texファイルに書き込み
     write_tex("./main.tex".to_string(), ques, ans, n);
+    progress(all_n, 3);
 
     //コンパイル
     shell();
+    progress(all_n, 4);
 }
 
 // 問題・解答を生成
@@ -127,4 +133,18 @@ fn shell() {
         .arg("main.dvi")
         .output()
         .expect("failed");
+}
+
+// k/n
+fn progress(n: i32, k: i32) {
+    print!("\x1B[2K");
+    print!("\r");
+    stdout().flush().unwrap();
+    for _i in 0 .. k {
+        print!("■");
+    }
+    for _i in k+1 .. n {
+        print!("□");
+    }
+    stdout().flush().unwrap();
 }
