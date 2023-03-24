@@ -42,24 +42,55 @@ fn main() {
 fn equ(variable1: &str, variable2: &str) -> (String, String) {
     let mut res: (String, String) = (String::new(), String::new());
     // 因数分解時の係数
-    let a = get_rand(1, 10);
-    let b = get_rand(-9, 10);
-    let c = get_rand(1, 10);
-    let d = get_rand(-9, 10);
+    let mut a = get_rand(1, 10);
+    let mut b = get_rand(-9, 10);
+    let mut c = get_rand(1, 10);
+    let mut d = get_rand(-9, 10);
 
     // 展開後の係数
     let p: i32 = a * c;
     let q: i32 = a*d + b*c;
     let r: i32 = b * d;
 
+    // 共通因数でくくる
+    let mut k = 1;
+    print!("{} {} {} ", a, b, k);
+    (a, b, k)= yakubun(a, b, k);
+    print!("{} {} {} ", a, b, k);
+    print!("{} {} {} ", c, d, k);
+    (c, d, k)= yakubun(c, d, k);
+    println!("{} {} {} ", c, d, k);
+    let k_text: String;
+    if k == 1 {
+        k_text = String::from("");
+    } else {
+        k_text = k.to_string();
+    }
+    
+
     let x2: String = kou(p, 2, variable1);
     let x1: String = kou(q, 1, &format!("{}{}", variable1, variable2));
     let x0: String = kou(r, -2, variable2); // -2を指定すると2を指定したときと違い頭に+がつく
 
     res.0 = format!("\\item $\\displaystyle {}{}{}$", x2, x1, x0);
-    res.1 = format!("\\item $\\displaystyle ({0}{4}{1}{5})({2}{4}{3}{5})$", a, kou(b, 0, variable1), c, kou(d, 0, variable2), variable1, variable2);
+    res.1 = format!("\\item $\\displaystyle {6}({0}{4}{1}{5})({2}{4}{3}{5})$", a, kou(b, 0, variable1), c, kou(d, 0, variable2), variable1, variable2, k_text);
     return res;
 }
+
+fn yakubun(a: i32, b: i32, k: i32) -> (i32, i32, i32) {
+    let r: i32 = gcm(a, b);
+    (a/r, b/r, k*r)
+}
+fn gcm(a: i32, b: i32) -> i32 {
+    if a % b == 0 {
+        if b < 0 {
+            return -b;
+        }
+        return b;
+    }
+    gcm(b, a%b)
+}
+
 // a以上b未満の乱数を取得
 fn get_rand(a: i32, b :i32) -> i32 {
     let mut res: i32 = rand::thread_rng().gen_range(a, b-1);
