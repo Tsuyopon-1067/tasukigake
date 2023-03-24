@@ -21,8 +21,8 @@ fn main() {
     let mut ques: String = String::new();
     let mut ans: String = String::new();
     for i in 0..n {
-        ques += &format!("{}{}{}", "\t\t\t\\item $", v[i].0, "$ \\\\\n");
-        ans += &format!("{}{}{}", "\t\t\t\\item $", v[i].1, "$ \\\\\n");
+        ques += &format!("\t\t\t{}\n", v[i].0);
+        ans += &format!("\t\t\t{}\n", v[i].1);
     }
     progress(all_n, 2);
 
@@ -51,10 +51,8 @@ fn equ() -> (String, String) {
     let x1: String = kou(q, 1);
     let x0: String = kou(r, 0);
 
-    res.0 = x2 + &x1 + &x0;
-    res.1 = String::new() 
-    + "(" + &a.to_string() + "x" + &kou(b, 0) + ")"
-    + "(" + &c.to_string() + "x" + &kou(d, 0) + ")";
+    res.0 = format!("\\item $\\displaystyle {}{}{}$", x2, x1, x0);
+    res.0 = format!("\\item $\\displaystyle ({}x{})({}x{})$", a, kou(b, 0), c, kou(d, 0));
     return res;
 }
 // a以上b未満の乱数を取得
