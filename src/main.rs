@@ -41,11 +41,13 @@ fn main() {
 // 問題・解答を生成
 fn equ(variable1: &str, variable2: &str) -> (String, String) {
     let mut res: (String, String) = (String::new(), String::new());
+    // 因数分解時の係数
     let a = get_rand(1, 10);
     let b = get_rand(-9, 10);
     let c = get_rand(1, 10);
     let d = get_rand(-9, 10);
 
+    // 展開後の係数
     let p: i32 = a * c;
     let q: i32 = a*d + b*c;
     let r: i32 = b * d;
