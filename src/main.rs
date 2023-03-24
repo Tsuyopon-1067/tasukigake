@@ -53,7 +53,7 @@ fn equ() -> (String, String) {
     let x0: String = kou(r, 0);
 
     res.0 = format!("\\item $\\displaystyle {}{}{}$", x2, x1, x0);
-    res.0 = format!("\\item $\\displaystyle ({}x{})({}x{})$", a, kou(b, 0), c, kou(d, 0));
+    res.1 = format!("\\item $\\displaystyle ({}x{})({}x{})$", a, kou(b, 0), c, kou(d, 0));
     return res;
 }
 // a以上b未満の乱数を取得
