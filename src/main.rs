@@ -7,7 +7,7 @@ use std::fs::File;
 use std::process::{Command};
 
 fn main() {
-    let all_n: i32 = 4;
+    let all_n: i32 = 5;
     let number_of_problem : usize = input_text("問題数".to_string()).parse().unwrap();
     let variable1 : String = input_text("文字1".to_string());
     let variable2 : String = input_text("文字2".to_string());
@@ -34,8 +34,8 @@ fn main() {
     progress(all_n, 3);
 
     //コンパイル
-    shell();
-    progress(all_n, 4);
+    shell(all_n);
+    progress(all_n, 5);
 }
 
 // 問題・解答を生成
@@ -120,12 +120,14 @@ fn write_tex(path: String, ques: String, ans: String, number_of_problem: usize) 
         writeln!(file, "\\end{{document}}").expect("cannot write.");
 }
 
-fn shell() {
+fn shell(all_n: i32) {
     let mut _output;
     _output = Command::new("platex")
         .arg("main.tex")
         .output()
         .expect("failed");
+
+    progress(all_n, 4);
     _output = Command::new("dvipdfmx")
         .arg("main.dvi")
         .output()
