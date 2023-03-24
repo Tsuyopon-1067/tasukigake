@@ -54,12 +54,8 @@ fn equ(variable1: &str, variable2: &str) -> (String, String) {
 
     // 共通因数でくくる
     let mut k = 1;
-    print!("{} {} {} ", a, b, k);
     (a, b, k)= yakubun(a, b, k);
-    print!("{} {} {} ", a, b, k);
-    print!("{} {} {} ", c, d, k);
     (c, d, k)= yakubun(c, d, k);
-    println!("{} {} {} ", c, d, k);
     let k_text: String;
     if k == 1 {
         k_text = String::from("");
@@ -68,12 +64,12 @@ fn equ(variable1: &str, variable2: &str) -> (String, String) {
     }
     
 
-    let x2: String = kou(p, 2, variable1);
-    let x1: String = kou(q, 1, &format!("{}{}", variable1, variable2));
-    let x0: String = kou(r, -2, variable2); // -2を指定すると2を指定したときと違い頭に+がつく
+    let x2: String = kou(p, 2, variable1, true);
+    let x1: String = kou(q, 1, &format!("{}{}", variable1, variable2), false);
+    let x0: String = kou(r, -2, variable2, false); // -2を指定すると2を指定したときと違い頭に+がつく
 
     res.0 = format!("\\item $\\displaystyle {}{}{}$", x2, x1, x0);
-    res.1 = format!("\\item $\\displaystyle {6}({0}{4}{1}{5})({2}{4}{3}{5})$", a, kou(b, 0, variable1), c, kou(d, 0, variable2), variable1, variable2, k_text);
+    res.1 = format!("\\item $\\displaystyle {4}({0}{1})({2}{3})$", kou(a, 1, variable1, true), kou(b, 1, variable2, false), kou(c, 1, variable1, true), kou(d, 1, variable2, false), k_text);
     return res;
 }
 
@@ -100,17 +96,26 @@ fn get_rand(a: i32, b :i32) -> i32 {
     return res;
 }
 // 展開後の式の項を作成 e:x^eの項についての処理をさせる
-fn kou(pqr: i32, e: i32, variable: &str) -> String {
+// flag: 式の頭はtrue
+fn kou(pqr: i32, e: i32, variable: &str, flag: bool) -> String {
     if pqr == 0 {
         return "".to_string();
     }
 
     let mut res: String = String::new();
-    // x^2のみ+は省略
-    if e != 2 && pqr > 0 {
+    // trueなら+を省略する
+    if !flag && pqr > 0 {
         res += "+";
     }
-    res += &pqr.to_string();
+    // 変数名が空でなければ係数1のとき数字を出さない
+    // 変数名が空だったり係数が1じゃないときは数字を出す
+    if pqr == 1 && variable != "" {
+        // 何もしない
+    } else if pqr == -1 && variable != "" {
+        res += "-";
+    } else {
+        res += &pqr.to_string();
+    }
 
     // x^nを追記
     match e {
