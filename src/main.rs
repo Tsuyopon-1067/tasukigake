@@ -9,12 +9,14 @@ use std::process::{Command};
 fn main() {
     let all_n: i32 = 4;
     let number_of_problem : usize = input_text("問題数".to_string()).parse().unwrap();
+    let variable1 : String = input_text("文字1".to_string());
+    let variable2 : String = input_text("文字2".to_string());
     progress(all_n, 0);
 
     // 問題・解答を生成してvecに入れる
     let mut v: Vec<(String, String)> = Vec::new();
     for _i in 0 .. number_of_problem {
-        v.push(equ());
+        v.push(equ(&variable1, &variable2));
     }
     progress(all_n, 1);
 
@@ -37,7 +39,7 @@ fn main() {
 }
 
 // 問題・解答を生成
-fn equ() -> (String, String) {
+fn equ(variable1: &str, variable2: &str) -> (String, String) {
     let mut res: (String, String) = (String::new(), String::new());
     let a = get_rand(1, 10);
     let b = get_rand(-9, 10);
@@ -48,12 +50,12 @@ fn equ() -> (String, String) {
     let q: i32 = a*d + b*c;
     let r: i32 = b * d;
 
-    let x2: String = kou(p, 2);
-    let x1: String = kou(q, 1);
-    let x0: String = kou(r, 0);
+    let x2: String = kou(p, 2, variable1);
+    let x1: String = kou(q, 1, &format!("{}{}", variable1, variable2));
+    let x0: String = kou(r, -2, variable2);
 
     res.0 = format!("\\item $\\displaystyle {}{}{}$", x2, x1, x0);
-    res.1 = format!("\\item $\\displaystyle ({}x{})({}x{})$", a, kou(b, 0), c, kou(d, 0));
+    res.1 = format!("\\item $\\displaystyle ({0}{4}{1}{5})({2}{4}{3}{5})$", a, kou(b, 0, variable1), c, kou(d, 0, variable2), variable1, variable2);
     return res;
 }
 // a以上b未満の乱数を取得
@@ -64,8 +66,8 @@ fn get_rand(a: i32, b :i32) -> i32 {
     }
     return res;
 }
-// 展開後の式の項を作成
-fn kou(pqr: i32, e: i32) -> String {
+// 展開後の式の項を作成 e:x^eの項についての処理をさせる
+fn kou(pqr: i32, e: i32, variable: &str) -> String {
     if pqr == 0 {
         return "".to_string();
     }
@@ -79,8 +81,9 @@ fn kou(pqr: i32, e: i32) -> String {
 
     // x^nを追記
     match e {
-        2 => res += "x^2",
-        1 => res += "x",
+        2 => res += &format!("{}^2", variable),
+        1 => res += &format!("{}", variable),
+        -2 => res += &format!("{}^2", variable),
         _ => {},
     }
 
