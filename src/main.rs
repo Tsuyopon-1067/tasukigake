@@ -133,14 +133,18 @@ fn progress(n: i32, k: i32) {
     print!("\x1b[2K");
     print!("\r");
     stdout().flush().unwrap();
+
     for _i in 0 .. k {
         print!("■");
     }
-    for _i in k+1 .. n {
+    for _i in k+1 ..= n {
         print!("□");
     }
+    print!(" ");
+    print!("{:.1}%", k as f64 / n as f64 * 100.0);
     stdout().flush().unwrap();
 }
+
 
 // s:って出して入力文字列を返す
 fn input_text(s: String) -> String {
