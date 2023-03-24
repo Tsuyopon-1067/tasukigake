@@ -7,7 +7,7 @@ use std::process::{Command};
 
 fn main() {
     let all_n: i32 = 4;
-    let n : usize = input_text("num: ".to_string()).parse().unwrap();
+    let n : usize = input_text("問題数: ".to_string()).parse().unwrap();
     progress(all_n, 0);
 
     // 問題・解答を生成してvecに入れる
