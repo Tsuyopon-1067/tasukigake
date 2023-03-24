@@ -1,18 +1,19 @@
 extern crate rand;
 
 use rand::Rng;
+//use core::num::dec2flt::number;
 use std::io::{stdout, stdin, Write, BufRead};
 use std::fs::File;
 use std::process::{Command};
 
 fn main() {
     let all_n: i32 = 4;
-    let n : usize = input_text("問題数: ".to_string()).parse().unwrap();
+    let number_of_problem : usize = input_text("問題数: ".to_string()).parse().unwrap();
     progress(all_n, 0);
 
     // 問題・解答を生成してvecに入れる
     let mut v: Vec<(String, String)> = Vec::new();
-    for _i in 0..n {
+    for _i in 0 .. number_of_problem {
         v.push(equ());
     }
     progress(all_n, 1);
@@ -20,14 +21,14 @@ fn main() {
     // 問題・解答を文字列化
     let mut ques: String = String::new();
     let mut ans: String = String::new();
-    for i in 0..n {
+    for i in 0 .. number_of_problem {
         ques += &format!("\t\t\t{}\n", v[i].0);
         ans += &format!("\t\t\t{}\n", v[i].1);
     }
     progress(all_n, 2);
 
     // texファイルに書き込み
-    write_tex("./main.tex".to_string(), ques, ans, n);
+    write_tex("./main.tex".to_string(), ques, ans, number_of_problem);
     progress(all_n, 3);
 
     //コンパイル
@@ -87,7 +88,7 @@ fn kou(pqr: i32, e: i32) -> String {
 }
 
 // texファイルに書き込み
-fn write_tex(path: String, ques: String, ans: String, n: usize) {
+fn write_tex(path: String, ques: String, ans: String, number_of_problem: usize) {
        let mut file = File::create(path)
            .expect("file not found.");
         writeln!(file, "\\documentclass[11pt,a4paper,dvipdfmx]{{jsarticle}}").expect("cannot write.");
@@ -112,7 +113,7 @@ fn write_tex(path: String, ques: String, ans: String, n: usize) {
         writeln!(file, "\t\\end{{multicols}}").expect("cannot write.");
 
         writeln!(file, "\t\\subsection*{{正答率}}").expect("cannot write.");
-        writeln!(file, "\t\\Huge\\hspace{{1cm}} /{}", n).expect("cannot write.");
+        writeln!(file, "\t\\Huge\\hspace{{1cm}} /{}", number_of_problem).expect("cannot write.");
         writeln!(file, "\\end{{document}}").expect("cannot write.");
 }
 
