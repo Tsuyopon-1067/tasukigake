@@ -52,7 +52,7 @@ fn equ(variable1: &str, variable2: &str) -> (String, String) {
 
     let x2: String = kou(p, 2, variable1);
     let x1: String = kou(q, 1, &format!("{}{}", variable1, variable2));
-    let x0: String = kou(r, -2, variable2);
+    let x0: String = kou(r, -2, variable2); // -2を指定すると2を指定したときと違い頭に+がつく
 
     res.0 = format!("\\item $\\displaystyle {}{}{}$", x2, x1, x0);
     res.1 = format!("\\item $\\displaystyle ({0}{4}{1}{5})({2}{4}{3}{5})$", a, kou(b, 0, variable1), c, kou(d, 0, variable2), variable1, variable2);
