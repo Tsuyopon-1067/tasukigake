@@ -7,12 +7,7 @@ use std::process::{Command};
 
 fn main() {
     let all_n: i32 = 4;
-    print!("num: ");
-    stdout().flush().unwrap();
-    let stdin = stdin();
-    let mut buffer = String::new();
-    stdin.lock().read_line(&mut buffer).unwrap();  // 標準入力から行を読み取る
-    let n : usize = buffer.trim().parse().unwrap();  // 文字列を数値に変換する
+    let n : usize = input_text("num: ".to_string()).parse().unwrap();
     progress(all_n, 0);
 
     // 問題・解答を生成してvecに入れる
@@ -147,4 +142,14 @@ fn progress(n: i32, k: i32) {
         print!("□");
     }
     stdout().flush().unwrap();
+}
+
+// s:って出して入力文字列を返す
+fn input_text(s: String) -> String {
+    print!("{}: ", s);
+    stdout().flush().unwrap();
+    let stdin = stdin();
+    let mut buffer = String::new();
+    stdin.lock().read_line(&mut buffer).unwrap();  // 標準入力から行を読み取る
+    return buffer.trim().to_string();
 }
