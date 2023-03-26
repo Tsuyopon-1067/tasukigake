@@ -1,21 +1,20 @@
 extern crate rand;
 
 use rand::Rng;
-//use core::num::dec2flt::number;
-use std::io::{stdout, stdin, Write, BufRead};
 use std::fs::File;
-use std::process::{Command};
+use std::io::{stdin, stdout, BufRead, Write};
+use std::process::Command;
 
 fn main() {
     let all_n: i32 = 5;
-    let number_of_problem : usize = input_text("問題数".to_string()).parse().unwrap();
-    let variable1 : String = input_text("文字1".to_string());
-    let variable2 : String = input_text("文字2".to_string());
+    let number_of_problem: usize = input_text("問題数".to_string()).parse().unwrap();
+    let variable1: String = input_text("文字1".to_string());
+    let variable2: String = input_text("文字2".to_string());
     progress(all_n, 0);
 
     // 問題・解答を生成してvecに入れる
     let mut v: Vec<(String, String)> = Vec::new();
-    for _i in 0 .. number_of_problem {
+    for _i in 0..number_of_problem {
         v.push(equ(&variable1, &variable2));
     }
     progress(all_n, 1);
@@ -23,7 +22,7 @@ fn main() {
     // 問題・解答を文字列化
     let mut ques: String = String::new();
     let mut ans: String = String::new();
-    for i in 0 .. number_of_problem {
+    for i in 0..number_of_problem {
         ques += &format!("\t\t\t{}\n", v[i].0);
         ans += &format!("\t\t\t{}\n", v[i].1);
     }
@@ -49,33 +48,39 @@ fn equ(variable1: &str, variable2: &str) -> (String, String) {
 
     // 展開後の係数
     let p: i32 = a * c;
-    let q: i32 = a*d + b*c;
+    let q: i32 = a * d + b * c;
     let r: i32 = b * d;
 
     // 共通因数でくくる
     let mut k = 1;
-    (a, b, k)= yakubun(a, b, k);
-    (c, d, k)= yakubun(c, d, k);
+    (a, b, k) = yakubun(a, b, k);
+    (c, d, k) = yakubun(c, d, k);
     let k_text: String;
     if k == 1 {
         k_text = String::from("");
     } else {
         k_text = k.to_string();
     }
-    
 
     let x2: String = kou(p, 2, variable1, true);
     let x1: String = kou(q, 1, &format!("{}{}", variable1, variable2), false);
     let x0: String = kou(r, -2, variable2, false); // -2を指定すると2を指定したときと違い頭に+がつく
 
     res.0 = format!("\\item $\\displaystyle {}{}{}$", x2, x1, x0);
-    res.1 = format!("\\item $\\displaystyle {4}({0}{1})({2}{3})$", kou(a, 1, variable1, true), kou(b, 1, variable2, false), kou(c, 1, variable1, true), kou(d, 1, variable2, false), k_text);
+    res.1 = format!(
+        "\\item $\\displaystyle {4}({0}{1})({2}{3})$",
+        kou(a, 1, variable1, true),
+        kou(b, 1, variable2, false),
+        kou(c, 1, variable1, true),
+        kou(d, 1, variable2, false),
+        k_text
+    );
     return res;
 }
 
 fn yakubun(a: i32, b: i32, k: i32) -> (i32, i32, i32) {
     let r: i32 = gcm(a, b);
-    (a/r, b/r, k*r)
+    (a / r, b / r, k * r)
 }
 fn gcm(a: i32, b: i32) -> i32 {
     if a % b == 0 {
@@ -84,13 +89,14 @@ fn gcm(a: i32, b: i32) -> i32 {
         }
         return b;
     }
-    gcm(b, a%b)
+    gcm(b, a % b)
 }
 
 // a以上b未満の乱数を取得
-fn get_rand(a: i32, b :i32) -> i32 {
-    let mut res: i32 = rand::thread_rng().gen_range(a, b-1);
-    if res >= 0 { // 0は出ないようにする
+fn get_rand(a: i32, b: i32) -> i32 {
+    let mut res: i32 = rand::thread_rng().gen_range(a, b - 1);
+    if res >= 0 {
+        // 0は出ないようにする
         res += 1;
     }
     return res;
@@ -122,7 +128,7 @@ fn kou(pqr: i32, e: i32, variable: &str, flag: bool) -> String {
         2 => res += &format!("{}^2", variable),
         1 => res += &format!("{}", variable),
         -2 => res += &format!("{}^2", variable),
-        _ => {},
+        _ => {}
     }
 
     return res;
@@ -130,32 +136,35 @@ fn kou(pqr: i32, e: i32, variable: &str, flag: bool) -> String {
 
 // texファイルに書き込み
 fn write_tex(path: String, ques: String, ans: String, number_of_problem: usize) {
-       let mut file = File::create(path)
-           .expect("file not found.");
-        writeln!(file, "\\documentclass[11pt,a4paper,dvipdfmx]{{jsarticle}}").expect("cannot write.");
-        writeln!(file, "\\usepackage{{amsmath,amssymb, minijs, pxfonts, multicol, enumerate}}").expect("cannot write.");
-        writeln!(file, "\\usepackage[top=25.4truemm,bottom=25.4truemm,left=19.05truemm,right=19.05truemm]{{geometry}}").expect("cannot write.");
-        writeln!(file, "\\begin{{document}}").expect("cannot write.");
+    let mut file = File::create(path).expect("file not found.");
+    writeln!(file, "\\documentclass[11pt,a4paper,dvipdfmx]{{jsarticle}}").expect("cannot write.");
+    writeln!(
+        file,
+        "\\usepackage{{amsmath,amssymb, minijs, pxfonts, multicol, enumerate}}"
+    )
+    .expect("cannot write.");
+    writeln!(file, "\\usepackage[top=25.4truemm,bottom=25.4truemm,left=19.05truemm,right=19.05truemm]{{geometry}}").expect("cannot write.");
+    writeln!(file, "\\begin{{document}}").expect("cannot write.");
 
-        writeln!(file, "\t\\subsection*{{問題}}").expect("cannot write.");
-        writeln!(file, "\t\\begin{{multicols*}}{{3}}").expect("cannot write.");
-        writeln!(file, "\t\t\\begin{{enumerate}}[(1)]").expect("cannot write.");
-        write!(file, "{}", ques).expect("cannot write.");
-        writeln!(file, "\t\t\\end{{enumerate}}").expect("cannot write.");
-        writeln!(file, "\t\\end{{multicols*}}").expect("cannot write.");
+    writeln!(file, "\t\\subsection*{{問題}}").expect("cannot write.");
+    writeln!(file, "\t\\begin{{multicols*}}{{3}}").expect("cannot write.");
+    writeln!(file, "\t\t\\begin{{enumerate}}[(1)]").expect("cannot write.");
+    write!(file, "{}", ques).expect("cannot write.");
+    writeln!(file, "\t\t\\end{{enumerate}}").expect("cannot write.");
+    writeln!(file, "\t\\end{{multicols*}}").expect("cannot write.");
 
-        writeln!(file, "\t\\newpage").expect("cannot write.");
+    writeln!(file, "\t\\newpage").expect("cannot write.");
 
-        writeln!(file, "\t\\subsection*{{解答}}").expect("cannot write.");
-        writeln!(file, "\t\\begin{{multicols*}}{{3}}").expect("cannot write.");
-        writeln!(file, "\t\t\\begin{{enumerate}}[(1)]").expect("cannot write.");
-        write!(file, "{}", ans).expect("cannot write.");
-        writeln!(file, "\t\t\\end{{enumerate}}").expect("cannot write.");
-        writeln!(file, "\t\\end{{multicols*}}").expect("cannot write.");
+    writeln!(file, "\t\\subsection*{{解答}}").expect("cannot write.");
+    writeln!(file, "\t\\begin{{multicols*}}{{3}}").expect("cannot write.");
+    writeln!(file, "\t\t\\begin{{enumerate}}[(1)]").expect("cannot write.");
+    write!(file, "{}", ans).expect("cannot write.");
+    writeln!(file, "\t\t\\end{{enumerate}}").expect("cannot write.");
+    writeln!(file, "\t\\end{{multicols*}}").expect("cannot write.");
 
-        writeln!(file, "\t\\subsection*{{正答率}}").expect("cannot write.");
-        writeln!(file, "\t\\Huge\\hspace{{1cm}} /{}", number_of_problem).expect("cannot write.");
-        writeln!(file, "\\end{{document}}").expect("cannot write.");
+    writeln!(file, "\t\\subsection*{{正答率}}").expect("cannot write.");
+    writeln!(file, "\t\\Huge\\hspace{{1cm}} /{}", number_of_problem).expect("cannot write.");
+    writeln!(file, "\\end{{document}}").expect("cannot write.");
 }
 
 fn shell(all_n: i32) {
@@ -178,10 +187,10 @@ fn progress(n: i32, k: i32) {
     print!("\r");
     stdout().flush().unwrap();
 
-    for _i in 0 .. k {
+    for _i in 0..k {
         print!("■");
     }
-    for _i in k+1 ..= n {
+    for _i in k + 1..=n {
         print!("□");
     }
     print!(" ");
@@ -189,13 +198,12 @@ fn progress(n: i32, k: i32) {
     stdout().flush().unwrap();
 }
 
-
 // s:って出して入力文字列を返す
 fn input_text(s: String) -> String {
     print!("{}: ", s);
     stdout().flush().unwrap();
     let stdin = stdin();
     let mut buffer = String::new();
-    stdin.lock().read_line(&mut buffer).unwrap();  // 標準入力から行を読み取る
+    stdin.lock().read_line(&mut buffer).unwrap(); // 標準入力から行を読み取る
     return buffer.trim().to_string();
 }
